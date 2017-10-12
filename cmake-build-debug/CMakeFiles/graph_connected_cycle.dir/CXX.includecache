@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+D:/graph_connected_cycle/Edge.h
+Node.h
+D:/graph_connected_cycle/Node.h
+list
+-
+
+D:/graph_connected_cycle/Graph.h
+iostream
+-
+list
+-
+vector
+-
+Edge.h
+D:/graph_connected_cycle/Edge.h
+
+D:/graph_connected_cycle/Node.h
+string
+-
+
+D:/graph_connected_cycle/main.cpp
+iostream
+-
+vector
+-
+Graph.h
+D:/graph_connected_cycle/Graph.h
+
