@@ -13,6 +13,16 @@
 using namespace std;
 
 class Graph {
+private:
+    list<string> stackVisitors;
+
+    bool find(string element){
+        list<string>::iterator it;
+        for (it = stackVisitors.begin(); it != stackVisitors.end(); it++)
+            if (*it == element)
+                return true;
+        return false;
+    }
 public:
     list<Edge*> edges;
     list<Node*>  vertices;
@@ -27,7 +37,7 @@ public:
         list<Node*>::iterator it;
 
         for(it = vertices.begin(); it != vertices.end(); it++)
-            if((*it)->rotulo == rotulo)
+            if((*it)->label == rotulo)
                 ret = false;
 
         if (ret){
@@ -51,20 +61,29 @@ public:
         list<Node*>::iterator it;
 
         for(it = vertices.begin(); it != vertices.end(); it++)
-            cout << (*it)->rotulo << endl;
+            cout << (*it)->label << endl;
     }
+    list<string> edgesOf(string p)
+    {
+        list<string> ret;
+        list<Edge*>::iterator itE;
+        for(itE = edges.begin(); itE != edges.end(); itE++)
+            if((*itE)->arco.first->label == p )
+                ret.push_back((*itE)->arco.second->label);
 
+        return  ret;
+    }
     void imprimeEdges(){
         list<Edge*>::iterator it;
         for(it = edges.begin(); it!=edges.end();it++)
-            cout << (*it)->arco.first->rotulo << " - " << (*it)->arco.second->rotulo << endl;
+            cout << (*it)->arco.first->label << " - " << (*it)->arco.second->label << endl;
     };
-    bool cria_adjacencia(string from, string to){
+    bool create_edge(string from, string to){
         bool noEdge = true;
 
         list<Edge*>::iterator it;
         for(it = edges.begin() ; it != edges.end(); it++){
-            if ((*it)->arco.first->rotulo == from && (*it)->arco.second->rotulo == to){
+            if ((*it)->arco.first->label == from && (*it)->arco.second->label == to){
                 noEdge = false; //ARCO IS ALREADY ON THE GRAPH
                 break;
             }
@@ -79,11 +98,11 @@ public:
 
         return noEdge;
     }
-    bool cria_adjacencia(vector< pair<string,string>> edges){
+    bool create_edge(vector<pair<string, string>> edges){
         bool ret = true;
 
         for(int i = 0; i < edges.size(); i++)
-            ret = ret && cria_adjacencia(edges[i].first,edges[i].second);
+            ret = ret && create_edge(edges[i].first, edges[i].second);
 
         return ret;
     }
@@ -94,7 +113,7 @@ public:
 
         list<Node*>::iterator it;
         for (it = vertices.begin(); it != vertices.end(); it++){
-            if ((*it)->rotulo == rotulo){
+            if ((*it)->label == rotulo){
                 ret.first = true;
                 ret.second = *it;
                 break;
@@ -104,9 +123,28 @@ public:
         return ret;
     }
 
-
-
-
+    //DEPTH FIRST SEARCH - DFS
+    int depthFirstSearch(string origin, string destiny){
+        if (origin == destiny){
+            cout << origin;
+            return 1;
+        }else{
+            if (!find(origin)){
+                stackVisitors.push_back(origin);
+                list<string> adjOf = edgesOf(origin);
+                list<string>::iterator itAdj;
+                int x;
+                for(itAdj = adjOf.begin(); itAdj != adjOf.end();itAdj++){
+                    x = depthFirstSearch(*itAdj, destiny);
+                    if (x == 1)
+                        return 1;
+                }
+            }else{
+                cout << "There are cycle" << endl;
+            }
+        }
+        return 0;
+    }
 };
 
 

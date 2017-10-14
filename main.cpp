@@ -9,21 +9,17 @@
 int main() {
 
     Graph *g = new Graph();
-    vector<string> nodes  = {"A","B","C","D"};
+    vector<string> nodes  = {"0","1","2","3","4","5","6","7","8","9","10"};
 
     g->insert_node(nodes);
-    g->insert_node("E");
-    Node *F = new Node("F");
-    g->insert_node(F);
+    vector<pair<string,string>> edges = {
+            {"0","1"}, {"0","2"}, {"0","3"}, {"1","4"}, {"1","5"}, {"1","7"},
+            {"2","8"}, {"3","9"}, {"3","10"}, {"7","5"}
+    };
 
-    vector<pair<string,string>> edges = {{"A","B"}, {"B","C"}};
-
-    g->cria_adjacencia(edges);
-
-
+    g->create_edge(edges);
+    g->depthFirstSearch("0", "10");
     g->imprimeEdges();
-
-
 
     return 1;
 }

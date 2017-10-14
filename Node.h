@@ -12,10 +12,10 @@ using namespace std;
 class Node {
 
 public:
-    string rotulo;
+    string label;
 
     Node(string r){
-        rotulo = r;
+        label = r;
     }
 
 };
