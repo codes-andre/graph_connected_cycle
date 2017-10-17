@@ -16,22 +16,31 @@ class Graph {
 private:
     list<string> stackVisitors;
 
-    bool find(string element){
+    bool verified(string element){
         list<string>::iterator it;
-        for (it = stackVisitors.begin(); it != stackVisitors.end(); it++)
-            if (*it == element)
+        for (it = stackVisitors.begin(); it != stackVisitors.end(); it++) {
+            if (*it == element) {
                 return true;
+            }
+        }
         return false;
     }
+    list<string> nodeToString(){
+        list<Node*>::iterator it;
+        list<string> ret;
+        for(it = vertices.begin();it!= vertices.end();it++){
+            ret.push_back((*it)->label);
+        }
+        return ret;
+    }
+
 public:
     list<Edge*> edges;
     list<Node*>  vertices;
 
-
     void insert_node(Node* n){
         vertices.push_back(n);
     }
-
     bool insert_node(string rotulo){
         bool ret = true;
         list<Node*>::iterator it;
@@ -47,7 +56,6 @@ public:
 
         return ret;
     }
-
     bool insert_node(vector<string> rotulo){
         bool ret = true;
 
@@ -57,27 +65,24 @@ public:
         return ret;
     }
 
-    void imprime(){
+    void printVertices(){
         list<Node*>::iterator it;
 
         for(it = vertices.begin(); it != vertices.end(); it++)
             cout << (*it)->label << endl;
     }
-    list<string> edgesOf(string p)
-    {
-        list<string> ret;
-        list<Edge*>::iterator itE;
-        for(itE = edges.begin(); itE != edges.end(); itE++)
-            if((*itE)->arco.first->label == p )
-                ret.push_back((*itE)->arco.second->label);
+    void printStack(){
+        list<string>::iterator it;
 
-        return  ret;
+        for(it = stackVisitors.begin(); it != stackVisitors.end(); it++)
+            cout << *it << endl;
     }
-    void imprimeEdges(){
+    void printEdges(){
         list<Edge*>::iterator it;
         for(it = edges.begin(); it!=edges.end();it++)
             cout << (*it)->arco.first->label << " - " << (*it)->arco.second->label << endl;
     };
+
     bool create_edge(string from, string to){
         bool noEdge = true;
 
@@ -122,28 +127,77 @@ public:
 
         return ret;
     }
+    list<string> edgesOut(string p)    {
+        list<string> ret;
+        list<Edge*>::iterator itE;
+        for(itE = edges.begin(); itE != edges.end(); itE++)
+            if((*itE)->arco.first->label == p )
+                if(!verified((*itE)->arco.second->label))
+                   ret.push_back((*itE)->arco.second->label);
+
+        return  ret;
+    }
+
+    int bubbleConditional(int cond){
+        list<string> nodes = nodeToString();
+        list<string>::iterator it1;
+        list<string>::iterator it2;
+        int x;
+        bool ret = false;
+
+        for(it1 = nodes.begin(); it1 != nodes.end(); it1++){
+            for(it2 = nodes.begin(); it2 != nodes.end(); it2++){
+
+
+                if (*it1 != *it2) {
+                    cout << *it1 << " busca " <<  *it2 << endl;
+                    /*
+                    stackVisitors.clear();
+                    x = depthFirstSearch(*it1, *it2);
+                    if (x == cond) {
+                        cout << cond << " foi satisfeito " ;
+                        ret = true;
+                    }
+                    //se em algum momento encontrou 0 2 ou 0 então já sabe-se
+                    //se o grafo é não-conexo ou ciclico(ja verificado)
+                     */
+                }
+            }
+        }
+
+        return ret;
+    }
+    bool isCyclic(){
+        return bubbleConditional(2); //2 significa que node jfoiverificado
+    }
+
+    bool isConnectedBubble(){
+        return !bubbleConditional(0); //0 retorna true , significa que nao encontrou um caminho
+    }
 
     //DEPTH FIRST SEARCH - DFS
     int depthFirstSearch(string origin, string destiny){
+
         if (origin == destiny){
-            cout << origin;
             return 1;
-        }else{
-            if (!find(origin)){
+        }else
+        {
+            if (!verified(origin)){
                 stackVisitors.push_back(origin);
-                list<string> adjOf = edgesOf(origin);
+                list<string> adjOf = edgesOut(origin);
                 list<string>::iterator itAdj;
                 int x;
                 for(itAdj = adjOf.begin(); itAdj != adjOf.end();itAdj++){
                     x = depthFirstSearch(*itAdj, destiny);
-                    if (x == 1)
-                        return 1;
+                    if (x == 1) return 1; //encontrou
                 }
-            }else{
-                cout << "There are cycle" << endl;
+            }else {
+
+                cout << "ja verificado: " << origin << " - " << destiny << endl;
+                return 2; //ciclico
             }
         }
-        return 0;
+        return 0; // nao encontrou
     }
 };
 
